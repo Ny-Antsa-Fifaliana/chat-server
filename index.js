@@ -58,14 +58,14 @@ app.use(
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.post("/upload", upload.array("file"), (req, res) => {
-  const filePaths = req.files.map((file) => `/uploads/${file.filename}`);
+app.post("/upload", upload.single("file"), (req, res) => {
+  const filePath = `/uploads/${req.file.filename}`;
   const { name, room } = req.body;
-  res.json({ filePaths });
+  res.json({ filePaths: [filePath] });
 
   io.to(room).emit("message", {
     user: name,
-    text: filePaths.join(", "),
+    text: filePath,
   });
 });
 
