@@ -60,8 +60,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.post("/upload", upload.single("file"), (req, res) => {
   const filePath = `/uploads/${req.file.filename}`;
-  // const { name, room } = req.body;
-  const user = getUser(socket.id);
+  const { socketId } = req.body;
+  const user = getUser(socketId);
+
+  if (!user) {
+    return res.status(400).json({ error: "Utilisateur non trouvé." });
+  }
   res.json({ filePaths: [filePath] });
 
   io.to(user.room).emit("message", {
