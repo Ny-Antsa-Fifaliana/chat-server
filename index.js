@@ -60,11 +60,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.post("/upload", upload.single("file"), (req, res) => {
   const filePath = `/uploads/${req.file.filename}`;
-  const { name, room } = req.body;
+  // const { name, room } = req.body;
+  const user = getUser(socket.id);
   res.json({ filePaths: [filePath] });
 
-  io.to(room).emit("message", {
-    user: name,
+  io.to(user.room).emit("message", {
+    user: user.name,
     text: filePath,
   });
 });
